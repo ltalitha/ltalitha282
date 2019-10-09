@@ -6,11 +6,11 @@
 /*   By: ltalitha <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/13 15:05:56 by ltalitha          #+#    #+#             */
-/*   Updated: 2019/10/09 15:04:30 by ltalitha         ###   ########.fr       */
+/*   Updated: 2019/10/09 15:17:49 by ltalitha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-fndef LIBFT_H
+#ifndef LIBFT_H
 # define LIBFT_H
 
 # include <unistd.h>
