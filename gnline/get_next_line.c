@@ -6,7 +6,7 @@
 /*   By: ltalitha <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/24 19:57:48 by ltalitha          #+#    #+#             */
-/*   Updated: 2019/10/11 18:15:46 by ltalitha         ###   ########.fr       */
+/*   Updated: 2019/10/11 18:42:13 by ltalitha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,48 +24,51 @@ t_arr		*newlist(const int fd)
 	return (new);
 }
 
-char		*checkrest(char **p_n, char *rest)
+char		*restcheck(char *rest, char **line)
 {
-	char *str;
+	char *p_n;
 
-	if ((*p_n = ft_strchr(rest, '\n')) != NULL)
-	{
-		str = ft_strsub(rest, 0, *p_n - rest);
-		ft_strcpy(rest, ++(*p_n));
-	}
-	else
-	{
-		str = ft_strnew(ft_strlen(rest) + 1);
-		ft_strcat(str, rest);
+	if (rest)
+	    if ((p_n = ft_strchr(rest, '\n')))
+	    {
+		    *p_n = '\0';
+		    *line = ft_strdup(rest);
+		    ft_strcpy(rest, ++p_n);
+	    }
+	    else
+	    {
+		*line = ft_strdup(rest);
 		ft_strclr(rest);
-	}
-	return (str);
+        }
+    else
+        *line = ft_strnew(1);
+	return (p_n);
 }
 
-int			get_line(const int fd, char **line, char *rest)
+int			get_line(const int fd, char **line, char **rest)
 {
 	char			buf[BUFF_SIZE + 1];
 	char			*p_n;
 	char			*tmp;
-	int				rd;
+	int				wr;
 
 	p_n = NULL;
-	rd = 1;
-	*line = checkrest(&p_n, rest);
-	while (p_n == 0 && ((rd = read(fd, buf, BUFF_SIZE)) != 0))
+	p_n = restcheck(*rest, line);
+	while (p_n == 0 && ((wr = read(fd, buf, BUFF_SIZE)) != 0))
 	{
-		buf[rd] = '\0';
+		buf[wr] = '\0';
 		if ((p_n = ft_strchr(buf, '\n')) != NULL)
 		{
-			ft_strcpy(rest, ++p_n);
-			ft_strclr(--p_n);
+			*p_n = '\0';
+			p_n++;
+			*rest = ft_strdup(p_n);
 		}
 		tmp = *line;
-		if (!(*line = ft_strjoin(tmp, buf)) || rd < 0)
+		if (!(*line = ft_strjoin(*line, buf)) || wr < 0)
 			return (-1);
-		ft_strdel(&tmp);
+		free(tmp);
 	}
-	return ((ft_strlen(*line) || ft_strlen(rest) || rd) ? 1 : 0);
+	return ((ft_strlen(*line) || ft_strlen(*rest) || wr) ? 1 : 0);
 }
 
 int			get_next_line(const int fd, char **line)
