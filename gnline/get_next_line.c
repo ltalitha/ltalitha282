@@ -5,14 +5,14 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ltalitha <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/09/24 19:57:48 by ltalitha          #+#    #+#             */
-/*   Updated: 2019/10/11 18:42:13 by ltalitha         ###   ########.fr       */
+/*   Created: 2019/10/11 23:27:49 by ltalitha          #+#    #+#             */
+/*   Updated: 2019/10/14 20:07:31 by ltalitha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-t_arr		*newlist(const int fd)
+t_arr		*ft_newlist(const int fd)
 {
 	t_arr	*new;
 
@@ -24,24 +24,21 @@ t_arr		*newlist(const int fd)
 	return (new);
 }
 
-char		*restcheck(char *rest, char **line)
+char		*restcheck(char **line, char *rest)
 {
 	char *p_n;
 
-	if (rest)
-	    if ((p_n = ft_strchr(rest, '\n')))
-	    {
-		    *p_n = '\0';
-		    *line = ft_strdup(rest);
-		    ft_strcpy(rest, ++p_n);
-	    }
-	    else
-	    {
-		*line = ft_strdup(rest);
+	if ((*line = ft_strchr(rest, '\n')) != NULL)
+	{
+		p_n = ft_strsub(rest, 0, *line - rest);
+		ft_strcpy(rest, ++(*line));
+	}
+	else
+	{
+		p_n = ft_strnew(ft_strlen(rest) + 1);
+		ft_strcat(p_n, rest);
 		ft_strclr(rest);
-        }
-    else
-        *line = ft_strnew(1);
+	}
 	return (p_n);
 }
 
@@ -53,15 +50,14 @@ int			get_line(const int fd, char **line, char **rest)
 	int				wr;
 
 	p_n = NULL;
-	p_n = restcheck(*rest, line);
+	*line = restcheck(&p_n, *rest);
 	while (p_n == 0 && ((wr = read(fd, buf, BUFF_SIZE)) != 0))
 	{
 		buf[wr] = '\0';
 		if ((p_n = ft_strchr(buf, '\n')) != NULL)
 		{
-			*p_n = '\0';
-			p_n++;
-			*rest = ft_strdup(p_n);
+			ft_strcpy(*rest, ++p_n);
+			ft_strclr(--p_n);
 		}
 		tmp = *line;
 		if (!(*line = ft_strjoin(*line, buf)) || wr < 0)
@@ -80,14 +76,14 @@ int			get_next_line(const int fd, char **line)
 	if (fd < 0 || line == 0)
 		return (-1);
 	if (!list)
-		list = newlist(fd);
+		list = ft_newlist(fd);
 	tmp = list;
 	while (tmp->fd != fd)
 	{
 		if (tmp->next == NULL)
-			tmp->next = newlist(fd);
+			tmp->next = ft_newlist(fd);
 		tmp = tmp->next;
 	}
-	ret = get_line(fd, line, tmp->rest);
+	ret = get_line(fd, line, &tmp->rest);
 	return (ret);
 }
