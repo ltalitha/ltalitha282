@@ -26,9 +26,6 @@ typedef struct		s_arr
 	struct s_arr	*next;
 }					t_arr;
 
-t_arr				*ft_newlist(const int fd);
-char				*checkrest(char **p_n, char *rest);
-int					get_line(const int fd, char **line, char **rest);
 int					get_next_line(const int fd, char **line);
 
 #endif
