@@ -12,9 +12,9 @@
 
 #include "get_next_line.h"
 
-t_arr		*ft_newlist(const int fd)
+t_arr		        *ft_newlist(const int fd)
 {
-	t_arr	*new;
+	t_arr	        *new;
 
 	if (!(new = (t_arr *)malloc(sizeof(t_arr))))
 		return (NULL);
@@ -24,9 +24,9 @@ t_arr		*ft_newlist(const int fd)
 	return (new);
 }
 
-char		*restcheck(char **line, char *rest)
+char                *restcheck(char **line, char *rest)
 {
-	char *p_n;
+	char            *p_n;
 
 	if ((*line = ft_strchr(rest, '\n')) != NULL)
 	{
@@ -42,7 +42,7 @@ char		*restcheck(char **line, char *rest)
 	return (p_n);
 }
 
-int			get_line(const int fd, char **line, char **rest)
+int			        get_line(const int fd, char **line, char **rest)
 {
 	char			buf[BUFF_SIZE + 1];
 	char			*p_n;
@@ -51,7 +51,7 @@ int			get_line(const int fd, char **line, char **rest)
 
 	p_n = NULL;
 	*line = restcheck(&p_n, *rest);
-	while (p_n == 0 && ((wr = read(fd, buf, BUFF_SIZE)) != 0))
+	while (p_n == NULL && ((wr = read(fd, buf, BUFF_SIZE)) != 0))
 	{
 		buf[wr] = '\0';
 		if ((p_n = ft_strchr(buf, '\n')) != NULL)
@@ -67,7 +67,7 @@ int			get_line(const int fd, char **line, char **rest)
 	return ((ft_strlen(*line) || ft_strlen(*rest) || wr) ? 1 : 0);
 }
 
-int			get_next_line(const int fd, char **line)
+int                 get_next_line(const int fd, char **line)
 {
 	static t_arr	*list;
 	t_arr			*tmp;
