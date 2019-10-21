@@ -17,7 +17,7 @@
 # include <fcntl.h>
 # include <stdlib.h>
 # include "libft/libft.h"
-# define BUFF_SIZE 1000
+# define BUFF_SIZE 4
 
 typedef struct		s_arr
 {
