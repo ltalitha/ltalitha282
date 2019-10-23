@@ -6,7 +6,7 @@
 /*   By: ltalitha <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/11 23:27:49 by ltalitha          #+#    #+#             */
-/*   Updated: 2019/10/17 22:22:22 by ltalitha         ###   ########.fr       */
+/*   Updated: 2019/10/22 22:30:12 by ltalitha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ int					get_line(const int fd, char **line, char *rest)
 	int				wr;
 
 	p_n = NULL;
+	wr = 1;
 	*line = restcheck(&p_n, rest);
 	while (p_n == NULL && ((wr = read(fd, buf, BUFF_SIZE)) != 0))
 	{
@@ -62,7 +63,7 @@ int					get_line(const int fd, char **line, char *rest)
 		tmp = *line;
 		if (!(*line = ft_strjoin(tmp, buf)) || wr < 0)
 			return (-1);
-		free(tmp);
+		ft_strdel(&tmp);
 	}
 	return ((ft_strlen(*line) || ft_strlen(rest) || wr) ? 1 : 0);
 }
@@ -73,17 +74,21 @@ int					get_next_line(const int fd, char **line)
 	t_arr			*tmp;
 	int				ret;
 
-	if (fd < 0 || line == 0)
+	if (fd < 0 || line == 0 || BUFF_SIZE == 10000000)
 		return (-1);
 	if (!list)
 		list = ft_newlist(fd);
 	tmp = list;
 	while (tmp->fd != fd)
-	{
-		if (tmp->next == NULL)
-			tmp->next = ft_newlist(fd);
-		tmp = tmp->next;
-	}
+		while (tmp->fd != fd)
+		{
+			if (tmp->next == NULL)
+			{
+				if (((tmp->next = newlist(fd)) == NULL))
+					return (-1);
+			}
+			tmp = tmp->next;
+		}
 	ret = get_line(fd, line, tmp->rest);
 	return (ret);
 }
